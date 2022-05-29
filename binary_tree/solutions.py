@@ -207,6 +207,7 @@ def hasPathSum(root: TreeNode, targetSum: int) -> bool:
     112. 路径总和
     给定一个二叉树和一个目标和，判断该树中是否存在根节点到叶子节点的路径，这条路径上所有节点值相加等于目标和。
     """
+
     def isornot(root: TreeNode, targetSum: int):
         if (root.left is None) and (root.right is None) and targetSum == 0:  # leaf
             return True
@@ -228,6 +229,31 @@ def hasPathSum(root: TreeNode, targetSum: int) -> bool:
         return isornot(root, targetSum - root.val)
 
 
+def hasPathSumII(root: TreeNode, targetSum: int):
+    """
+    113 路径总和-ii
+    與112 路徑總和相似 但是回傳符合條件的所有路徑
+    """
+
+    def traversal(cur_node, remain):
+        if cur_node.left is None and cur_node.right is None and remain == 0:
+            result.append(path[:])
+        if cur_node.left:
+            path.append(cur_node.left.val)
+            traversal(cur_node.left, targetSum - cur_node.left.val)
+            path.pop()
+        if cur_node.right:
+            path.append(cur_node.right.val)
+            traversal(cur_node.right, targetSum - cur_node.right.val)
+            path.pop()
+
+    result, path = [], []
+    if root is None:
+        return result
+    else:
+        return traversal(root, targetSum)
+
+
 if __name__ == "__main__":
     import time
 
@@ -244,9 +270,11 @@ if __name__ == "__main__":
     # print(sumOfLeftLeaves(arr2tree([3, 9, 20, None, None, 15, 7])))
 
     # print(minDepth(arr2tree([3, 9, 20, None, None, 15, 7])))
-    start = time.time()
-    print(getNodeNum1(arr2tree([1, 2, 3, 4, 5, 6])))
-    print(time.time() - start)
-    start = time.time()
-    print(getNodeNum2(arr2tree([1, 2, 3, 4, 5, 6])))
-    print(time.time() - start)
+    # start = time.time()
+    # print(getNodeNum1(arr2tree([1, 2, 3, 4, 5, 6])))
+    # print(time.time() - start)
+    # start = time.time()
+    # print(getNodeNum2(arr2tree([1, 2, 3, 4, 5, 6])))
+    # print(time.time() - start)
+
+    print(hasPathSumII(arr2tree([5, 4, 8, 11, None, 13, 4, 7, 2, None, None, 5, 1]), 22))
