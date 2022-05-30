@@ -1,3 +1,6 @@
+from typing import List
+
+
 class TreeNode:
     def __init__(self, value):
         self.val = value
@@ -47,7 +50,7 @@ def postorderTraversal(root: TreeNode):
     return result
 
 
-def arr2tree(nums: list[int]):
+def arr2tree(nums: List[int]):
     def createNode(rootIdx: int):
         root = TreeNode(nums[rootIdx])
         if rootIdx * 2 + 1 <= len(nums) - 1 and nums[rootIdx * 2 + 1] is not None:

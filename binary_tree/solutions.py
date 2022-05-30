@@ -90,7 +90,7 @@ def binaryTreePaths(root: TreeNode) -> list:
     解法：递归法+隐形回溯
     """
 
-    def traversal(cur: TreeNode, path: str, result: list[str]) -> None:
+    def traversal(cur: TreeNode, path: str, result: List[str]) -> None:
         path += str(cur.val)
         # if current node is leave
         if not cur.left and not cur.right:
@@ -258,7 +258,34 @@ def hasPathSumII(root: TreeNode, targetSum: int):
         traversal(root, targetSum - root.val)
         return result
 
-def buildMaxTree(nums:list):
+
+def buildTree(preorder: List[int], inorder: List[int]) -> TreeNode:
+    """
+    105. Construct Binary Tree from Preorder and Inorder Traversal
+    使用 前序與中序建立二叉樹
+    """
+    if not preorder:
+        return None
+
+    root_val = preorder[0]
+    root = TreeNode(root_val)
+
+    # 分割inorder
+    seperate_idx = inorder.index(root_val)
+    inorder_left = inorder[:seperate_idx]
+    inorder_right = inorder[seperate_idx + 1:]
+
+    # 分割preorder
+    preorder_left = preorder[1:len(inorder_left) + 1]
+    preorder_right = preorder[1 + len(inorder_left):]
+
+    # 遞迴
+    root.left = buildTree(preorder_left, inorder_left)
+    root.right = buildTree(preorder_right, inorder_right)
+    return root
+
+
+def buildMaxTree(nums: list):
     """
     654.最大二叉树
     定義：
@@ -267,6 +294,28 @@ def buildMaxTree(nums:list):
     右子树：最大值右边的数组对应的最大二叉树。
     """
 
+
+def mergeTrees(root1: TreeNode, root2: TreeNode) -> TreeNode:
+    """
+    617.合并二叉树
+
+    """
+    newNode = None
+    if root1 is not None and root2 is not None:
+        newNode = TreeNode(root1.val + root2.val)
+    elif root1 is None and root2 is not None:
+        newNode = TreeNode(root2.val)
+    elif root1 is not None and root2 is None:
+        newNode = TreeNode(root1.val)
+
+    root1_left = root1.left if root1 else None
+    root1_right = root1.right if root1 else None
+    root2_left = root2.left if root2 else None
+    root2_right = root2.left if root2 else None
+    newNode.left = mergeTrees(root1_left, root2_left)
+    newNode.right = mergeTrees(root1_right, root2_right)
+
+    return newNode
 
 
 if __name__ == "__main__":
@@ -292,4 +341,7 @@ if __name__ == "__main__":
     # print(getNodeNum2(arr2tree([1, 2, 3, 4, 5, 6])))
     # print(time.time() - start)
 
-    print(hasPathSumII(arr2tree([5, 4, 8, 11, None, 13, 4, 7, 2, None, None, 5, 1]), 22))
+    # print(hasPathSumII(arr2tree([5, 4, 8, 11, None, 13, 4, 7, 2, None, None, 5, 1]), 22))
+
+    root = buildTree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7])
+    print(root)
