@@ -7,6 +7,13 @@ class TreeNode:
         self.left = None
         self.right = None
 
+    def __str__(self):
+        left = None if self.left is None else self.left.val
+        right = None if self.right is None else self.right.val
+        return '(D:{}, L:{}, R:{})'.format(self.val, left, right)
+
+
+
 
 def preorderTraversal(root: TreeNode):
     """
@@ -63,3 +70,19 @@ def arr2tree(nums: List[int]):
 
     root = createNode(0)
     return root
+
+
+def print2D(root: TreeNode):
+    """
+    將binary tree印出來
+    """
+    current_level = [root]
+    while current_level:
+        print(' '.join(str(node) for node in current_level))
+        next_level = list()
+        for n in current_level:
+            if n.left:
+                next_level.append(n.left)
+            if n.right:
+                next_level.append(n.right)
+        current_level = next_level
