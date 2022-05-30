@@ -233,25 +233,40 @@ def hasPathSumII(root: TreeNode, targetSum: int):
     """
     113 路径总和-ii
     與112 路徑總和相似 但是回傳符合條件的所有路徑
+
+    解法：遞迴
     """
 
     def traversal(cur_node, remain):
-        if cur_node.left is None and cur_node.right is None and remain == 0:
+        if cur_node.left is None and cur_node.right is None and remain == 0:  # 到達leaf且remain為0
             result.append(path[:])
-        if cur_node.left:
+            return
+        if cur_node.left is not None:
             path.append(cur_node.left.val)
-            traversal(cur_node.left, targetSum - cur_node.left.val)
-            path.pop()
-        if cur_node.right:
+            traversal(cur_node.left, remain - cur_node.left.val)
+            path.pop(-1)
+        if cur_node.right is not None:
             path.append(cur_node.right.val)
-            traversal(cur_node.right, targetSum - cur_node.right.val)
-            path.pop()
+            traversal(cur_node.right, remain - cur_node.right.val)
+            path.pop(-1)
 
     result, path = [], []
     if root is None:
         return result
     else:
-        return traversal(root, targetSum)
+        path.append(root.val)
+        traversal(root, targetSum - root.val)
+        return result
+
+def buildMaxTree(nums:list):
+    """
+    654.最大二叉树
+    定義：
+    根节点：数组中的最大值。
+    左子树：最大值左边的数组对应的最大二叉树。
+    右子树：最大值右边的数组对应的最大二叉树。
+    """
+
 
 
 if __name__ == "__main__":
