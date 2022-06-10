@@ -373,24 +373,52 @@ class Solution:
         """
 
         def searchBST(root: TreeNode):
+            nonlocal max_count
             if not root: return
             if root.left: searchBST(root.left)
             if root.val in freq:
                 freq[root.val] += 1
+                if freq[root.val] > max_count:
+                    max_count = freq[root.val]
             else:
                 freq[root.val] = 1
+                if max_count < 1:
+                    max_count = 1
             if root.right: searchBST(root.right)
 
         max_count = 0
         freq = {}
         searchBST(root)
         min_freq = float('-inf')
-        result = 0
+        result = []
         for k, v in freq.items():
-            if v > min_freq:
-                result = int(k)
-                min_freq = v
+            if v == max_count:
+                result.append(k)
         return result
+
+    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode):
+        """
+        236. 二叉树的最近公共祖先
+        概念：
+        如果找到一个节点，发现左子树出现结点p，右子树出现节点q，或者 左子树出现结点q，右子树出现节点p，那么该节点就是节点p和q的最近公共祖先。
+        容易忽略一个情况，就是节点本身p(q)，它拥有一个子孙节点q(p)。(即：其中一點是另外一點的祖先)
+
+        解法：
+        使用后序遍历，回溯的过程，就是从低向上遍历节点，一旦发现满足第一种情况的节点，就是最近公共节点了。
+        但是如果p或者q本身就是最近公共祖先呢？其实只需要找到一个节点是p或者q的时候，直接返回当前节点，无需继续递归子树。
+        如果接下来的遍历中找到了后继节点满足第一种情况则修改返回值为后继节点，否则，继续返回已找到的节点即可。
+        """
+        if not root or root == p or root == q:
+            return root
+
+        left = self.lowestCommonAncestor(root.left, p, q)
+        right = self.lowestCommonAncestor(root.right, p, q)
+
+        if left and right:
+            return root
+        if left:
+            return left
+        return right
 
 
 if __name__ == "__main__":
@@ -434,5 +462,5 @@ if __name__ == "__main__":
     # print(sol.getMinDiff(arr2tree([1, None, 2])))
 
     # print2D(arr2tree([1, None, 2, None, None, 2]))
-    print(sol.findMode(arr2tree([1, None, 2, None, None, 2])))
-    print(type(sol.findMode(arr2tree([1, None, 2, None, None, 2]))))
+    # print(sol.findMode(arr2tree([1, None, 2, None, None, 2])))
+    print(sol.findMode(arr2tree([0])))
