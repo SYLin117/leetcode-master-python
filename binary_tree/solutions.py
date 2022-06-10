@@ -373,52 +373,60 @@ class Solution:
         """
 
         def searchBST(root: TreeNode):
-            nonlocal max_count
             if not root: return
             if root.left: searchBST(root.left)
             if root.val in freq:
                 freq[root.val] += 1
-                if freq[root.val] > max_count:
-                    max_count = freq[root.val]
             else:
                 freq[root.val] = 1
-                if max_count < 1:
-                    max_count = 1
             if root.right: searchBST(root.right)
 
         max_count = 0
         freq = {}
         searchBST(root)
         min_freq = float('-inf')
-        result = []
+        result = 0
         for k, v in freq.items():
-            if v == max_count:
-                result.append(k)
+            if v > min_freq:
+                result = int(k)
+                min_freq = v
         return result
 
-    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode):
+    def lowestCommonAncestor(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
         """
-        236. 二叉树的最近公共祖先
+        235. BST最近公共祖先
         概念：
-        如果找到一个节点，发现左子树出现结点p，右子树出现节点q，或者 左子树出现结点q，右子树出现节点p，那么该节点就是节点p和q的最近公共祖先。
-        容易忽略一个情况，就是节点本身p(q)，它拥有一个子孙节点q(p)。(即：其中一點是另外一點的祖先)
-
-        解法：
-        使用后序遍历，回溯的过程，就是从低向上遍历节点，一旦发现满足第一种情况的节点，就是最近公共节点了。
-        但是如果p或者q本身就是最近公共祖先呢？其实只需要找到一个节点是p或者q的时候，直接返回当前节点，无需继续递归子树。
-        如果接下来的遍历中找到了后继节点满足第一种情况则修改返回值为后继节点，否则，继续返回已找到的节点即可。
+        在有序树里，如果判断一个节点的左子树里有p，右子树里有q呢？
+        其实只要从上到下遍历的时候，cur节点是数值在[p, q]区间中则说明该节点cur就是最近公共祖先了。
         """
-        if not root or root == p or root == q:
+        if root.val > p.val and root.val > q.val:
+            return self.lowestCommonAncestor(root.left, p, q)  # 如果cur < p, q，則該點應該在右子樹
+        if root.val < p.val and root.val < q.val:
+            return self.lowestCommonAncestor(root.right, p, q)  # 如果cur > p, q，則該點應該在左子樹
+        return root  # 如果一直沒有找到則會跑到leaf的None
+
+    def lowestCommonAncestor2(self, root: TreeNode, p: TreeNode, q: TreeNode) -> TreeNode:
+        """
+        236. 最近公共祖先
+        所有节点的值都是唯一的。
+        p、q 为不同节点且均存在于给定的二叉树中。
+
+        概念：查詢p, q 是否在左右子樹中
+        如果在 node 的左子树没找到与 p，q 相等的结点，递归函数返回null，公共祖先在右侧结点
+        如果在 node 的右子树没找到与 p，q 相等的结点，递归函数返回null，公共祖先在左侧结点
+        如果在 node 左右子树都找到与 p，q 相等的结点，递归函数返回公众祖先 node 结点
+
+        如果左右子樹有 p or q 則目前的點即為最近公共祖先
+        """
+        if not root or root == p or root == q:  # 一直遇到None(leaf node之後) or p or q
             return root
 
-        left = self.lowestCommonAncestor(root.left, p, q)
-        right = self.lowestCommonAncestor(root.right, p, q)
+        left = self.lowestCommonAncestor2(root.left, p, q)
+        right = self.lowestCommonAncestor2(root.right, p, q)
 
-        if left and right:
-            return root
-        if left:
-            return left
-        return right
+        if not left: return right
+        if not right: return left
+        return root
 
 
 if __name__ == "__main__":
@@ -463,4 +471,12 @@ if __name__ == "__main__":
 
     # print2D(arr2tree([1, None, 2, None, None, 2]))
     # print(sol.findMode(arr2tree([1, None, 2, None, None, 2])))
-    print(sol.findMode(arr2tree([0])))
+    # print(type(sol.findMode(arr2tree([1, None, 2, None, None, 2]))))
+
+    # p = TreeNode(5)
+    # q = TreeNode(6)
+
+    # print2D(arr2tree([3, 5, 1, 6, 2, 0, 8, None, None, 7, 4]))
+    print(sol.lowestCommonAncestor(arr2tree([6, 2, 8, 0, 4, 7, 9, None, None, 3, 5]), TreeNode(5), TreeNode(12)))
+
+    print(sol.lowestCommonAncestor(arr2tree([6, 2, 8, 0, 4, 7, 9, None, None, 3, 5]), TreeNode(5), TreeNode(12)))

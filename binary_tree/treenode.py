@@ -12,7 +12,8 @@ class TreeNode:
         right = None if self.right is None else self.right.val
         return '(D:{}, L:{}, R:{})'.format(self.val, left, right)
 
-
+    def __eq__(self, other):
+        return self.val == other.val
 
 
 def preorderTraversal(root: TreeNode):
