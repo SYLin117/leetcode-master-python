@@ -196,6 +196,63 @@ class Solution:
         backtrack(s, 0, 0)
         return res
 
+    def permute(self, nums: list[int]):
+        """
+        46. 全排列
+        给定一个 没有重复 数字的序列，返回其所有可能的全排列。
+        输入: [1,2,3]
+        输出: [ [1,2,3], [1,3,2], [2,1,3], [2,3,1], [3,1,2], [3,2,1] ]
+        """
+        res = []
+        path = []
+        used = [False] * len(nums)
+
+        def backtrack():
+            if len(path) == len(nums):
+                res.append(path[:])
+                return
+            for i in range(0, len(nums)):  # 每層都會把所有數loop
+                if used[i] == True:  # 跳過已經使用的數
+                    continue
+                used[i] = True
+                path.append(nums[i])
+                backtrack()
+                path.pop()
+                used[i] = False
+
+        backtrack()
+        return res
+
+    def permute2(self, nums: list[int]):
+        """
+        46. 全排列
+        给定一个 没有重复 数字的序列，返回其所有可能的全排列。
+        输入：nums = [1,1,2]
+        输出： [[1,1,2], [1,2,1], [2,1,1]]
+        """
+        res = []
+        path = []
+        used = [False] * len(nums)
+        nums.sort()
+
+        def backtrack():
+            if len(path) == len(nums):
+                res.append(path[:])
+                return
+            for i in range(0, len(nums)): # loop 所有數
+                if used[i] == True:  # 跳過已經使用的數(每個數不可重複使用)
+                    continue
+                if i > 0 and nums[i] == nums[i-1] and used[i - 1]:  # 跳過重複的情況(當nums中有重複的數)
+                    continue
+                used[i] = True
+                path.append(nums[i])
+                backtrack()
+                path.pop()
+                used[i] = False
+
+        backtrack()
+        return res
+
 
 if __name__ == "__main__":
     sol = Solution()
@@ -207,4 +264,7 @@ if __name__ == "__main__":
 
     # print(sol.partition("aab"))
 
-    print(sol.restoreIpAddresses('0000'))
+    # print(sol.restoreIpAddresses('0000'))
+
+    # print(sol.permute([1, 2, 3]))
+    print(sol.permute2([1, 1, 2]))
